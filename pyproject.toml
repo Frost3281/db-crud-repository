@@ -2,13 +2,13 @@
 name = "db-repository"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["Vitaliy.Mikhalchenko <Vitaliy.Mikhalchenko@bristolcapital.ru>"]
 readme = "README.md"
 packages = [{include = "db_repository"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-sqlmodel = "^0.0.14"
+sqlmodel = "^0.0.16"
 
 
 [tool.poetry.group.dev.dependencies]
