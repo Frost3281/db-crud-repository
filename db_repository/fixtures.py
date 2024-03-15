@@ -24,6 +24,7 @@ def db_session_fixture() -> Iterator[Session]:
             table_metadata.schema = 'brl_apex'
         SQLModel.metadata.create_all(engine)
         yield session
+    engine.dispose()
 
 
 async_engine = create_async_engine(
