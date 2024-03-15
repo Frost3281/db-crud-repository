@@ -15,7 +15,7 @@ engine = create_engine(
 )
 
 
-@pytest.fixture(name='db_session', scope='session')
+@pytest.fixture(name='db_session')
 def db_session_fixture() -> Iterator[Session]:
     """Сессия для тестов."""
     with Session(engine) as session:
@@ -34,7 +34,7 @@ async_engine = create_async_engine(
 )
 
 
-@pytest_asyncio.fixture(name='async_session', scope='function')
+@pytest_asyncio.fixture(name='async_session')
 async def async_session_fixture() -> AsyncIterator[AsyncSession]:
     """Фикстура асинхронной сессии sqlite in-memory."""
     async with AsyncSession(async_engine) as session:
