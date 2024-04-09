@@ -12,6 +12,7 @@ engine = create_engine(
     connect_args={'check_same_thread': False},
     poolclass=StaticPool,
     future=True,
+    echo=True,
 )
 
 
@@ -32,6 +33,7 @@ async_engine = create_async_engine(
     connect_args={'check_same_thread': False},
     poolclass=StaticPool,
     future=True,
+    echo=True,
 )
 
 

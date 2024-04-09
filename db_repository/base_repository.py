@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Generic, Type, Union, Sequence
 
-from sqlalchemy import inspect, tuple_
+from sqlalchemy import inspect, tuple_, insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import StaleDataError
 from sqlalchemy.sql.elements import BinaryExpression
@@ -25,7 +25,14 @@ class DBManager(Generic[T_SQLModel]):
     def bulk_delete_insert(self, entities: list[T_SQLModel]) -> None:
         """Удаляем данные из таблицы в БД по первичному ключу, затем выполняем вставку."""
         self._delete_previous(entities)
-        self.session.add_all(entities)
+        if not self._has_relationships:
+            self.session.execute(
+                insert(self.model).values(
+                    [entity.model_dump() for entity in entities],
+                ),
+            )
+        else:
+            self.session.add_all(entities)
         try:
             self.session.commit()
         except (StaleDataError, IntegrityError):
@@ -53,6 +60,11 @@ class DBManager(Generic[T_SQLModel]):
         """Удаляем строку из БД."""
         self.session.delete(entity)
         self.session.commit()
+
+    @property
+    def _has_relationships(self) -> bool:
+        """Есть ли связи между моделями."""
+        return bool(inspect(self.model).relationships)
 
     def _delete_previous(self, entities: list[T_SQLModel]) -> None:
         """Удаляем записи, которые есть в текущей выборке."""
