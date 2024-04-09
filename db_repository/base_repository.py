@@ -22,7 +22,7 @@ class DBManager(Generic[T_SQLModel]):
         """Список названий столбцов - первичных ключей."""
         return [pk.name for pk in inspect(self.model).primary_key]
 
-    def bulk_delete_insert(self, entities: list[T_SQLModel]) -> None:
+    def bulk_delete_insert(self, entities: list[T_SQLModel], *, is_commit: bool = True) -> None:
         """Удаляем данные из таблицы в БД по первичному ключу, затем выполняем вставку."""
         self._delete_previous(entities)
         if not self._has_relationships:
@@ -33,6 +33,8 @@ class DBManager(Generic[T_SQLModel]):
             )
         else:
             self.session.add_all(entities)
+        if not is_commit:
+            return
         try:
             self.session.commit()
         except (StaleDataError, IntegrityError):
